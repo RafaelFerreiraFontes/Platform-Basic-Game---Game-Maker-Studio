@@ -1,0 +1,86 @@
+//Get Player Inputs
+keyLeft = keyboard_check(vk_left);
+keyRight = keyboard_check(vk_right);
+keyJump = keyboard_check(ord("Z"));
+keyDash = keyboard_check(ord("X"));
+
+//Calculate Movement:
+var move = keyRight - keyLeft;
+
+//Check if Player is On Floor:
+isOnFloor = place_meeting(x,y + 1,oSolid);
+
+//Calculate horizontal speed:
+hsp = move * walkForce;
+
+//Calculate vertical speed:
+vsp += grav;
+
+//Calculate Variable Jump
+if(keyJump and isOnFloor)
+{
+  vsp = -jumpForce;
+}
+//If player is jumping and not keyJump
+else if(!keyJump and vsp < 0)
+{
+  vsp = 0;//Set vertical speed to zero.(cancel jump)
+}
+
+//Calculate dash:
+if(keyDash and canDash and !isOnDash)
+{
+   isOnDash = true;//Set is On Dash to true
+   canDash = false;//Set can Dash to false
+   dashCount = 0;//Set dash Count to 0
+   alarm[0] = room_speed;//Set alarm time to room_speed
+}
+
+//While is On Dash and dash Count < dash Distance
+if(isOnDash and dashCount < dashDistance)
+{
+   hsp = image_xscale * dashPass;//Set horizontal speed to image_xscale multiplies dash Pass
+   dashCount += dashPass; //Increment dash Pass in dash Count    
+   vsp = 0;//Set vertical speed to zero.
+   canDash = false;//Set can Dash to false
+}
+//If dash Count >= dash Distance   
+else if(dashCount >= dashDistance)
+{
+  dashCount = 0;//Set dash Count to 0
+  isOnDash = false;//Set is On Dash to false
+}
+//if alarm[0] == -1 and not can Dash 
+if(alarm[0] == -1 and !canDash)
+{
+  canDash = true;
+}
+
+//Horizontal Collision Check
+if(place_meeting(x + hsp,y,oSolid))
+{
+   while(!place_meeting(x + sign(hsp),y,oSolid))
+   {
+     x += sign(hsp);
+   }
+   hsp = 0;
+   isOnDash = false;
+   canDash = true;
+}
+x += hsp;
+
+//Vertical Collision Check
+if(place_meeting(x,y + vsp,oSolid))
+{
+   while(!place_meeting(x,y + sign(vsp),oSolid))
+   {
+     y += sign(vsp);
+   }
+   vsp = 0;
+   isOnDash = false;
+}
+y += vsp;
+
+//Mirrored Sprite
+if(hsp != 0)
+ image_xscale = sign(hsp);

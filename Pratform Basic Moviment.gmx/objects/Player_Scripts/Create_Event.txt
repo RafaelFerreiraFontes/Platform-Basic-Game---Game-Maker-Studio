@@ -1,0 +1,13 @@
+grav = 0.5;//Gravit of Player
+hsp = 0;//Horizontal speed
+vsp = 0;//Vertical speed
+
+walkForce = 5;
+jumpForce = 10.5;
+dashPass = 7;
+dashCount = 0;
+dashDistance = 90;
+
+isOnFloor = false;//Check if player is on Floor.
+canDash = true;//Check if player can dash.
+isOnDash = false;
